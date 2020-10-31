@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane fx:controller="sample.ControllerSceneOne" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label layoutX="417.0" layoutY="131.0" prefHeight="53.0" prefWidth="166.0" text="Messenger" textAlignment="CENTER" textOverrun="CLIP" AnchorPane.leftAnchor="417.0" AnchorPane.rightAnchor="417.0">
+         <font>
+            <Font name="System Italic" size="36.0" />
+         </font>
+      </Label>
+      <Button fx:id="authenticationButton" onAction="#authenticationScene" layoutX="138.0" layoutY="326.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="200.0" text="Вход" textAlignment="CENTER">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+      <Button fx:id="registrationButton" onAction="#registrationScene" layoutX="661.0" layoutY="326.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="185.0" text="Регистрация" textAlignment="CENTER">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
