@@ -2,18 +2,18 @@ package sample.com.server;
 
 
 
-import sample.com.Commands;
-import sample.com.User;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class MessengerCommands extends Server {
 
     public static void callingCommandByUser(User user) {
         int indexSpace = user.getLastMessage().indexOf(" ");
+        if(indexSpace == -1){
+            System.out.println("вызвана некоректная команда");
+            return;
+        }
         String command = user.getLastMessage().substring(1, indexSpace);
         String subject = user.getLastMessage().substring(++indexSpace);
         if(callingCommand(command, subject, user.getName())){
@@ -23,6 +23,10 @@ public class MessengerCommands extends Server {
 
     public static void callingCommandByServer(String message) {
         int indexSpace = message.indexOf(" ");
+        if(indexSpace == -1){
+            System.out.println("вызвана некоректная команда");
+            return;
+        }
         String command = message.substring(1, indexSpace);
         String subject = message.substring(++indexSpace);
         if(callingCommand(command, subject, "Server")){
@@ -53,8 +57,6 @@ public class MessengerCommands extends Server {
                 e.printStackTrace();
             }
         }
-        listUsers = listUsers.stream().filter(y -> !y.getName().equals(subject))
-                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
     }
 
     private static void giveAdmin(String subject, String nameAuthor){

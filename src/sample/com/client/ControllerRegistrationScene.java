@@ -1,10 +1,8 @@
-package sample;
+package sample.com.client;
 
-import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import sample.com.client.Client;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,7 +27,7 @@ public class ControllerRegistrationScene extends Client {
                     name = tfLogin.getText();
                     password = tfPassword.getText();
                     send.getScene().getWindow().hide();
-                    crateNewWindow("sceneMessenger.fxml");
+                    crateNewWindow("scenes/sceneMessenger.fxml");
                 }
                 else{
                     error.setVisible(true);
@@ -46,6 +44,6 @@ public class ControllerRegistrationScene extends Client {
         PrintWriter printWriter = new PrintWriter(serverSocket.getOutputStream(), true);
         printWriter.println("prev");
         prev.getScene().getWindow().hide();
-        crateNewWindow("sceneOne.fxml");
+        crateNewWindow("scenes/sceneOne.fxml");
     }
 }

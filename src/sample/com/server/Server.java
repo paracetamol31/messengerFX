@@ -1,14 +1,10 @@
 package sample.com.server;
 
 
-import sample.com.User;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -22,76 +18,56 @@ public class Server {
 
     public void start() throws IOException {
         serverSocket = new ServerSocket(PORT);
-        Timer timer = new Timer();
-        TimerTask waitUsers = new TimerTask() {
-            @Override
-            public void run() {
+        Output.outputStoryForServer();
+        Thread connectWithNewClients = new Thread(() -> {
+            while (true) {
                 try {
-                    Socket finalClientSocket;
-                    finalClientSocket = serverSocket.accept();
-                    User newUser = null;
-                    while (newUser == null) {
-                        newUser = InitializationOfUsers.initialization(finalClientSocket);
+                    Socket finalClientSocket = serverSocket.accept();
+                    User newUser =  InitializationOfUsers.initialization(finalClientSocket);
+                    if(newUser == null) {
+                        finalClientSocket.close();
+                        continue;
                     }
-                    User finalNewUser = newUser;
-                    Output.storyOutput(finalNewUser);
-                    Output.print("Server", "Пользователь " + finalNewUser.getName() + " Вошел в чат");
+                    Output.outputStoryForUser(newUser);
+                    Output.print("Server", "Пользователь " + newUser.getName() + " Вошел в чат");
                     newUser.startGiveMessages();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        };
-        timer.scheduleAtFixedRate(waitUsers, 0, 100);
+        });
+        connectWithNewClients.start();
 
-        TimerTask threadForOutput = new TimerTask(){
-
-            @Override
-            public void run() {
-                    try {
-                        User user = messages.take();
-                        if (user.isAdmin() && user.getLastMessage().charAt(0) == '/') {
-                            MessengerCommands.callingCommandByUser(user);
-                        } else Output.print(user.getName(), user.getLastMessage());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        Thread sendsMessagesToUsers = new Thread(() -> {
+            while (true) {
+                try {
+                    User user = messages.take();
+                    if (user.isAdmin() && user.getLastMessage().charAt(0) == '/') {
+                        MessengerCommands.callingCommandByUser(user);
+                    } else Output.print(user.getName(), user.getLastMessage());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-        };
-        Timer timer2 = new Timer();
-        timer2.scheduleAtFixedRate(threadForOutput, 0, 100);
+            }
+        });
+        sendsMessagesToUsers.start();
 
-            TimerTask printMessageForServer = new TimerTask(){
-            @Override
-            public void run() {
+        Thread readingMessagesFromTheServer = new Thread(() -> {
+            while (true) {
                 Scanner scanner = new Scanner(System.in);
                 String str = scanner.nextLine();
                 if (str.charAt(0) == '/') {
                     MessengerCommands.callingCommandByServer(str);
-                }
-                else Output.print("Server", str)    ;
+                } else Output.print("Server", str);
             }
-        };
-            Timer timer3 = new Timer();
-            timer3.scheduleAtFixedRate(printMessageForServer, 0,100);
-
-
-       TimerTask checkConnectUsers = new TimerTask() {
-            @Override
-            public void run() {
-                listUsers.stream().filter(y -> !y.getSocket().isConnected()).forEach(Server::deleteUser);
-            }
-        };
-        Timer timer4 = new Timer();
-        timer4.scheduleAtFixedRate(checkConnectUsers, 0, 1000);
+        });
+        readingMessagesFromTheServer.start();
     }
 
-
-
     protected static void deleteUser(User user){
-        user.stop();
         listUsers = listUsers.stream().filter(y -> y != user)
                 .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
+        user.stop();
     }
 }
 

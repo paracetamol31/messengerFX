@@ -5,14 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import sample.com.client.Client;
 
-public class Main2 extends Application {
+public class MainClient extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        Client client = new Client();
-        Parent root = FXMLLoader.load(getClass().getResource("sceneOne.fxml"));
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("com/client/scenes/sceneOne.fxml"));
         primaryStage.setTitle("messenger");
         primaryStage.setScene(new Scene(root, 1000, 800));
         primaryStage.show();
@@ -22,4 +20,5 @@ public class Main2 extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }

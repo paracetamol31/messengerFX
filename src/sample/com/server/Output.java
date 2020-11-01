@@ -1,8 +1,6 @@
 package sample.com.server;
 
 
-import sample.com.User;
-
 import java.io.*;
 import java.util.Scanner;
 
@@ -29,7 +27,7 @@ public class Output extends Server {
         }
     }
 
-    public static void storyOutput(User user){
+    public static void outputStoryForUser(User user){
         File file = new File(PATH_TO_THE_LIST_MESSAGES);
         try {
             Scanner readingFromFile = new Scanner(file);
@@ -46,11 +44,28 @@ public class Output extends Server {
         }
     }
 
+    public static void outputStoryForServer(){
+        File file = new File(PATH_TO_THE_LIST_MESSAGES);
+        try {
+            Scanner readingFromFile = new Scanner(file);
+            while (readingFromFile.hasNextLine()) {
+                String nameAuthor = readingFromFile.nextLine();
+                String msg = "";
+                if(readingFromFile.hasNextLine()){
+                    msg = readingFromFile.nextLine();
+                }
+                System.out.println(nameAuthor + ": " + msg);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static void addToStory(String nameAuthor, String text){
         OutputStreamWriter writer = null;
         try {
             writer = new OutputStreamWriter(new FileOutputStream(PATH_TO_THE_LIST_MESSAGES, true));
-            writer.append(nameAuthor).append(String.valueOf('\n'))
+            writer.append(nameAuthor).append(" ").append(String.valueOf('\n'))
                     .append(text).append(String.valueOf('\n'));
         } catch (IOException e) {
             e.printStackTrace();

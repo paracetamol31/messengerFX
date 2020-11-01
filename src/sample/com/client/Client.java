@@ -1,33 +1,25 @@
 package sample.com.client;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Scanner;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 public class Client {
     protected static Socket serverSocket;
     protected static String name;
     protected static String password;
 
-    public void connect(){
+    public boolean connect(String ip, String port){
         try {
-            serverSocket = new Socket("localhost", 8189);
-        } catch (IOException e) {
-            e.printStackTrace();
+            serverSocket = new Socket(ip, Integer.parseInt(port));
+        } catch (Exception e) {
+            return false;
         }
+        return serverSocket.isConnected();
     }
 
     protected void crateNewWindow(String pathToFXML){

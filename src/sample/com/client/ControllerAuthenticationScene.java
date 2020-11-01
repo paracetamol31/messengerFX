@@ -1,10 +1,8 @@
-package sample;
+package sample.com.client;
 
-import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import sample.com.client.Client;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -17,20 +15,19 @@ public class ControllerAuthenticationScene extends Client {
     public Button prev;
     public Label error;
 
-    public void sendToServer(ActionEvent actionEvent) {
-        String str = "";
+    public void sendToServer() {
         try {
             PrintWriter printWriter = new PrintWriter(serverSocket.getOutputStream(), true);
             Scanner scanner = new Scanner(serverSocket.getInputStream());
             printWriter.println("next");
-            str = tfLogin.getText() + '\n' + tfPassword.getText();
+            String str = tfLogin.getText() + '\n' + tfPassword.getText();
             printWriter.println(str);
             String msg = scanner.nextLine();
             if (msg.equals("true")){
                 name = tfLogin.getText();
                 password = tfPassword.getText();
                 send.getScene().getWindow().hide();
-                crateNewWindow("sceneMessenger.fxml");
+                crateNewWindow("scenes/sceneMessenger.fxml");
             }
             else{
                 error.setVisible(true);
@@ -43,10 +40,14 @@ public class ControllerAuthenticationScene extends Client {
 
     }
 
-    public void back(ActionEvent actionEvent) throws IOException {
-        PrintWriter printWriter = new PrintWriter(serverSocket.getOutputStream(), true);
-        printWriter.println("prev");
-        prev.getScene().getWindow().hide();
-        crateNewWindow("sceneOne.fxml");
+    public void back()  {
+        try {
+            PrintWriter printWriter = new PrintWriter(serverSocket.getOutputStream(), true);
+            printWriter.println("prev");
+            prev.getScene().getWindow().hide();
+            crateNewWindow("scenes/sceneOne.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

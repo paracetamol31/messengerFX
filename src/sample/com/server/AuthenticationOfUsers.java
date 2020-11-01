@@ -1,9 +1,6 @@
 package sample.com.server;
 
 
-import sample.com.User;
-import sample.com.Validator;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,8 +10,8 @@ import java.util.Scanner;
 
 public class AuthenticationOfUsers extends InitializationOfUsers {
     public static User authentication(Socket clientSocket){
-        String login = " ";
-        String password = " ";
+        String login;
+        String password;
         while (true) {
             try {
                 Scanner scanner = new Scanner(clientSocket.getInputStream());
@@ -28,7 +25,7 @@ public class AuthenticationOfUsers extends InitializationOfUsers {
                             !Validator.validateThereIsSpace(login) && !Validator.validateThereIsSpace(password)) {
                         flag = !isTheUserRegistered(login + " " + password);
                     }
-                    printWriter.println(Boolean.toString(flag));
+                    printWriter.println(flag);
                     if (flag) break;
                 }
                 else if(key.equals("prev")){
@@ -46,8 +43,8 @@ public class AuthenticationOfUsers extends InitializationOfUsers {
 
     private static boolean isTheUserRegistered(String nameUser){
         File file = new File(PATH_TO_THE_LIST_OF_USERS);
-        Scanner readingFromFile = null;
-        String str = "";
+        Scanner readingFromFile;
+        String str;
         try {
             readingFromFile = new Scanner(file);
             while (readingFromFile.hasNextLine()) {

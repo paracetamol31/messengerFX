@@ -1,16 +1,14 @@
 package sample.com.server;
 
-import sample.com.User;
-import sample.com.Validator;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
 public class RegistrationOfUsers extends InitializationOfUsers {
     public static User registration(Socket clientSocket) {
-        String login = " ";
-        String password = " ";
+        String login;
+        String password;
+        password = " ";
         while (true) {
             try {
                 Scanner scanner = new Scanner(clientSocket.getInputStream());
@@ -24,7 +22,7 @@ public class RegistrationOfUsers extends InitializationOfUsers {
                             !Validator.validateThereIsSpace(login) && !Validator.validateThereIsSpace(password)) {
                         flag = true;
                     }
-                    printWriter.println(Boolean.toString(flag));
+                    printWriter.println(flag);
                     if (flag) break;
                 }
                 else if(key.equals("prev")){

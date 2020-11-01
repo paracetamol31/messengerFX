@@ -1,13 +1,9 @@
-package sample.com;
-
-import sample.com.server.Output;
-import sample.com.server.Server;
+package sample.com.server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class User extends Server {
     private String name;
@@ -15,7 +11,6 @@ public class User extends Server {
     private String lastMessage;
     private boolean admin;
     private Scanner scanner;
-    TimerTask readMessagesUser;
 
     public String getName() {
         return name;
@@ -61,28 +56,33 @@ public class User extends Server {
         }
     }
 
-    public void startGiveMessages(){
-        readMessagesUser = new TimerTask(){
-            @Override
-            public void run() {
-                giveMessages();
+    public void startGiveMessages() {
+        Thread giveMsg = new Thread(() -> {
+            boolean flag = true;
+            while (flag) {
+                flag = giveMessages();
             }
-        };
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(readMessagesUser, 0, 1000);
+        });
+        giveMsg.start();
     }
 
-    public void read() {
+    public void read() throws NoSuchElementException {
         try {
             scanner = new Scanner(socket.getInputStream());
             lastMessage = scanner.nextLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
-    public void giveMessages(){
-        read();
+    public boolean giveMessages(){
+        try {
+            read();
+        }catch (NoSuchElementException e){
+            deleteUser(this);
+            return false;
+        }
         if (!lastMessage.equals("")) {
             try {
                 messages.put(this);
@@ -90,11 +90,12 @@ public class User extends Server {
                 e.printStackTrace();
             }
         }
+        return true;
     }
 
     public void stop(){
         Output.print("Server", "Пользователь " + name + " вышел из чата");
         scanner.close();
-        readMessagesUser.cancel();
     }
 }
+

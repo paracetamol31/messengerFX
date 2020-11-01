@@ -2,17 +2,13 @@ package sample.com.server;
 
 
 
-import sample.com.User;
-
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
 public class InitializationOfUsers extends Server {
     public static User initialization(Socket clientSocket) {
-        Scanner scanner = null;
+        Scanner scanner;
         String str = "";
         try {
             scanner = new Scanner(clientSocket.getInputStream());
