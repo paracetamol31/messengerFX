@@ -6,8 +6,14 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class InitializationOfUsers extends Server {
-    public static User initialization(Socket clientSocket) {
+public class InitializationOfUsers {
+    private final Data data;
+
+    public InitializationOfUsers(Data data){
+        this.data = data;
+    }
+
+    public User initialize(Socket clientSocket) {
         Scanner scanner;
         String str = "";
         try {
@@ -18,10 +24,12 @@ public class InitializationOfUsers extends Server {
         }
 
         if (str.equals("registration")) {
-            return RegistrationOfUsers.registration(clientSocket);
+            RegistrationOfUsers registrationOfUsers = new RegistrationOfUsers(data);
+            return registrationOfUsers.registerTheUser(clientSocket);
         }
         else if(str.equals("authentication")){
-            return AuthenticationOfUsers.authentication(clientSocket);
+            IdentificationOfUsers authenticationOfUsers = new IdentificationOfUsers(data);
+            return authenticationOfUsers.identifyTheUser(clientSocket);
         }
         return null;
     }

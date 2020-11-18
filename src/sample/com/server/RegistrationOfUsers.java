@@ -4,11 +4,16 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class RegistrationOfUsers extends InitializationOfUsers {
-    public static User registration(Socket clientSocket) {
+public class RegistrationOfUsers{
+    private final Data data;
+
+    public RegistrationOfUsers(Data data){
+        this.data = data;
+    }
+
+    public User registerTheUser(Socket clientSocket) {
         String login;
         String password;
-        password = " ";
         while (true) {
             try {
                 Scanner scanner = new Scanner(clientSocket.getInputStream());
@@ -33,18 +38,17 @@ public class RegistrationOfUsers extends InitializationOfUsers {
             }
         }
 
-
-        addingUserToDatabase(login, password);
+        addUserToDatabase(login, password);
 
         User newUser = new User(login, clientSocket);
-        listUsers.add(newUser);
+        data.addInListUsers(newUser);
         return newUser;
     }
 
-    private static void addingUserToDatabase(String name, String password){
+    private void addUserToDatabase(String name, String password){
         OutputStreamWriter writer = null;
         try {
-            writer = new OutputStreamWriter(new FileOutputStream(PATH_TO_THE_LIST_OF_USERS, true));
+            writer = new OutputStreamWriter(new FileOutputStream(data.getPathToTheListOfUsers(), true));
             writer.append(name).append(" ").append(password).append(String.valueOf('\n'));
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,8 +62,8 @@ public class RegistrationOfUsers extends InitializationOfUsers {
         }
     }
 
-    private static boolean isUserExists(String name){
-        File file = new File(PATH_TO_THE_LIST_OF_USERS);
+    private boolean isUserExists(String name){
+        File file = new File(data.getPathToTheListOfUsers());
         try {
             Scanner readingFromFile = new Scanner(file);
             while (readingFromFile.hasNext()) {

@@ -27,7 +27,7 @@ public class ControllerRegistrationScene extends Client {
                     name = tfLogin.getText();
                     password = tfPassword.getText();
                     send.getScene().getWindow().hide();
-                    crateNewWindow("scenes/sceneMessenger.fxml");
+                    crateNewWindow(PATH_TO_SCENE_MESSENGER);
                 }
                 else{
                     error.setVisible(true);
@@ -44,6 +44,6 @@ public class ControllerRegistrationScene extends Client {
         PrintWriter printWriter = new PrintWriter(serverSocket.getOutputStream(), true);
         printWriter.println("prev");
         prev.getScene().getWindow().hide();
-        crateNewWindow("scenes/sceneOne.fxml");
+        crateNewWindow(PATH_TO_SCENE_ONE);
     }
 }

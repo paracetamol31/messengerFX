@@ -38,6 +38,16 @@ public class ControllerSceneMessenger extends Client {
                         }
                     }catch (NoSuchElementException e){
                        addTextToWindow("Потеряно соединение с сервером!", "#f91707", "-fx-font: 18 arial;");
+                       serverSocket.close();
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
+                        }
+                        Platform.runLater(() -> {
+                            send.getScene().getWindow().hide();
+                            crateNewWindow(PATH_TO_SCENE_ONE);
+                        });
                         break;
                     }
                 }

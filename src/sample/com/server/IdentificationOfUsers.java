@@ -8,8 +8,14 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class AuthenticationOfUsers extends InitializationOfUsers {
-    public static User authentication(Socket clientSocket){
+public class IdentificationOfUsers {
+    Data data;
+
+    public IdentificationOfUsers(Data data){
+        this.data = data;
+    }
+
+    public User identifyTheUser(Socket clientSocket){
         String login;
         String password;
         while (true) {
@@ -37,12 +43,12 @@ public class AuthenticationOfUsers extends InitializationOfUsers {
         }
 
         User newUser = new User(login, clientSocket);
-        listUsers.add(newUser);
+        data.addInListUsers(newUser);
         return newUser;
     }
 
-    private static boolean isTheUserRegistered(String nameUser){
-        File file = new File(PATH_TO_THE_LIST_OF_USERS);
+    private boolean isTheUserRegistered(String nameUser){
+        File file = new File(data.getPathToTheListOfUsers());
         Scanner readingFromFile;
         String str;
         try {

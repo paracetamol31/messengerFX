@@ -1,36 +1,39 @@
 package sample.com.server;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
+
 
 public class Server {
-    private static ServerSocket serverSocket;
-    protected static CopyOnWriteArrayList<User> listUsers = new CopyOnWriteArrayList<>();
-    protected static LinkedBlockingQueue<User> messages = new LinkedBlockingQueue<>(20);
-    final static protected String PATH_TO_THE_LIST_OF_USERS = "src/sample/resources/users.txt";
-    final static protected String PATH_TO_THE_LIST_MESSAGES = "src/sample/resources/messages.txt";
-    final static private int PORT = 8189;
+    private final ServerSocket serverSocket;
+    Data data;
 
-    public void start() throws IOException {
-        serverSocket = new ServerSocket(PORT);
-        Output.outputStoryForServer();
+    public Server(){
+        data = new Data();
+        serverSocket = createServerSocket();
+    }
+
+    public void start() {
+        Output output = new Output(data);
+        output.outputStoryForServer(new File(data.getPathToTheListMessages()));
         Thread connectWithNewClients = new Thread(() -> {
             while (true) {
                 try {
                     Socket finalClientSocket = serverSocket.accept();
-                    User newUser =  InitializationOfUsers.initialization(finalClientSocket);
+                    InitializationOfUsers initializationOfUsers = new InitializationOfUsers(data);
+                    User newUser = initializationOfUsers.initialize(finalClientSocket);
                     if(newUser == null) {
                         finalClientSocket.close();
                         continue;
                     }
-                    Output.outputStoryForUser(newUser);
-                    Output.print("Server", "Пользователь " + newUser.getName() + " Вошел в чат");
-                    newUser.startGiveMessages();
+                    output.outputStoryForUser(newUser);
+                    output.printForAllUsers(new FormatMessages("Server",
+                            "Пользователь " + newUser.getName() + " вошел в чат"));
+                    newUser.giveMessages(data);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -40,14 +43,11 @@ public class Server {
 
         Thread sendsMessagesToUsers = new Thread(() -> {
             while (true) {
-                try {
-                    User user = messages.take();
-                    if (user.isAdmin() && user.getLastMessage().charAt(0) == '/') {
-                        MessengerCommands.callingCommandByUser(user);
-                    } else Output.print(user.getName(), user.getLastMessage());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    FormatMessages newMessage = data.takeMessageFromListMessages();
+                    if (newMessage.isMessageFromAdministrator() && newMessage.getMessageText().charAt(0) == '/') {
+                        MessengerCommands messengerCommands = new MessengerCommands(data);
+                        messengerCommands.callingCommandByUser(newMessage);
+                    } else output.printForAllUsers(newMessage);
             }
         });
         sendsMessagesToUsers.start();
@@ -57,17 +57,31 @@ public class Server {
                 Scanner scanner = new Scanner(System.in);
                 String str = scanner.nextLine();
                 if (str.charAt(0) == '/') {
-                    MessengerCommands.callingCommandByServer(str);
-                } else Output.print("Server", str);
+                    MessengerCommands messengerCommands = new MessengerCommands(data);
+                    messengerCommands.callingCommandByServer(str);
+                } else output.printForAllUsers(new FormatMessages("Server", str));
             }
         });
         readingMessagesFromTheServer.start();
     }
 
-    protected static void deleteUser(User user){
-        listUsers = listUsers.stream().filter(y -> y != user)
-                .collect(Collectors.toCollection(CopyOnWriteArrayList::new));
-        user.stop();
+
+    private ServerSocket createServerSocket(){
+        System.out.println("Введите порт: ");
+        Scanner scanner = new Scanner(System.in);
+        ServerSocket serverSocket = null;
+        boolean flag = true;
+        while (flag){
+            String port = scanner.next();
+            try{
+                serverSocket = new ServerSocket(Integer.parseInt(port));
+                flag = false;
+            } catch (Exception e) {
+                flag = true;
+                System.out.println("Введите коректный порт: ");
+            }
+        }
+        return serverSocket;
     }
 }
 

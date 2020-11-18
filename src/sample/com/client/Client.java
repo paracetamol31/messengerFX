@@ -12,6 +12,10 @@ public class Client {
     protected static Socket serverSocket;
     protected static String name;
     protected static String password;
+    protected final String PATH_TO_SCENE_ONE = "scenes/sceneOne.fxml";
+    protected final String PATH_TO_SCENE_MESSENGER = "scenes/sceneMessenger.fxml";
+    protected final String PATH_TO_REGISTRATION_SCENE = "scenes/registrationScene.fxml";
+    protected final String PATH_TO_IDENTIFICATION_SCENE = "scenes/identificationScene.fxml";
 
     public boolean connect(String ip, String port){
         try {

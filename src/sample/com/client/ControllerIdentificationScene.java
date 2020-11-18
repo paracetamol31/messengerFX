@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-public class ControllerAuthenticationScene extends Client {
+public class ControllerIdentificationScene extends Client {
     public TextField tfLogin;
     public TextField tfPassword;
     public Button send;
@@ -27,7 +27,7 @@ public class ControllerAuthenticationScene extends Client {
                 name = tfLogin.getText();
                 password = tfPassword.getText();
                 send.getScene().getWindow().hide();
-                crateNewWindow("scenes/sceneMessenger.fxml");
+                crateNewWindow(PATH_TO_SCENE_MESSENGER);
             }
             else{
                 error.setVisible(true);
@@ -45,7 +45,7 @@ public class ControllerAuthenticationScene extends Client {
             PrintWriter printWriter = new PrintWriter(serverSocket.getOutputStream(), true);
             printWriter.println("prev");
             prev.getScene().getWindow().hide();
-            crateNewWindow("scenes/sceneOne.fxml");
+            crateNewWindow(PATH_TO_SCENE_ONE);
         } catch (IOException e) {
             e.printStackTrace();
         }

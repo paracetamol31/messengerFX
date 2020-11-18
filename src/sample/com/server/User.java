@@ -5,9 +5,9 @@ import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class User extends Server {
+public class User {
     private String name;
-    private  Socket socket;
+    private Socket socket;
     private String lastMessage;
     private boolean admin;
     private Scanner scanner;
@@ -56,46 +56,30 @@ public class User extends Server {
         }
     }
 
-    public void startGiveMessages() {
+    public void giveMessages(Data data) {
         Thread giveMsg = new Thread(() -> {
             boolean flag = true;
             while (flag) {
-                flag = giveMessages();
+                try {
+                    readMessagesFromUser();
+                    if (!lastMessage.equals("")) data.putMessageInListMessages(new FormatMessages(name, lastMessage, admin));
+                }catch (NoSuchElementException e){
+                    data.deleteUserFromListUser(this);
+                    scanner.close();
+                    try {
+                        socket.close();
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                    flag = false;
+                }
             }
         });
         giveMsg.start();
     }
 
-    public void read() throws NoSuchElementException {
-        try {
-            scanner = new Scanner(socket.getInputStream());
+    public void readMessagesFromUser() throws NoSuchElementException {
             lastMessage = scanner.nextLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public boolean giveMessages(){
-        try {
-            read();
-        }catch (NoSuchElementException e){
-            deleteUser(this);
-            return false;
-        }
-        if (!lastMessage.equals("")) {
-            try {
-                messages.put(this);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return true;
-    }
-
-    public void stop(){
-        Output.print("Server", "Пользователь " + name + " вышел из чата");
-        scanner.close();
     }
 }
 

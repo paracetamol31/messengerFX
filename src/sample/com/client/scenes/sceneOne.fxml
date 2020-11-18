@@ -13,12 +13,12 @@
             <Font name="System Italic" size="36.0" />
          </font>
       </Label>
-      <Button fx:id="authenticationButton" layoutX="317.0" layoutY="519.0" mnemonicParsing="false" onAction="#authenticationScene" prefHeight="51.0" prefWidth="172.0" text="Вход" textAlignment="CENTER">
+      <Button fx:id="authenticationButton" layoutX="317.0" layoutY="519.0" mnemonicParsing="false" onAction="#startIdentificationScene" prefHeight="51.0" prefWidth="172.0" text="Вход" textAlignment="CENTER">
          <font>
             <Font size="24.0" />
          </font>
       </Button>
-      <Button fx:id="registrationButton" layoutX="494.0" layoutY="519.0" mnemonicParsing="false" onAction="#registrationScene" prefHeight="51.0" prefWidth="172.0" text="Регистрация" textAlignment="CENTER">
+      <Button fx:id="registrationButton" layoutX="494.0" layoutY="519.0" mnemonicParsing="false" onAction="#startRegistrationScene" prefHeight="51.0" prefWidth="172.0" text="Регистрация" textAlignment="CENTER">
          <font>
             <Font size="24.0" />
          </font>

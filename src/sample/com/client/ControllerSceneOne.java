@@ -15,7 +15,7 @@ public class ControllerSceneOne extends Client {
     public TextField port;
     public Label error;
 
-    public void registrationScene() {
+    public void startRegistrationScene() {
           if(connectToServer()) {
               try {
                   PrintWriter printWriter = new PrintWriter(serverSocket.getOutputStream(), true);
@@ -24,11 +24,11 @@ public class ControllerSceneOne extends Client {
                   e.printStackTrace();
               }
               registrationButton.getScene().getWindow().hide();
-              crateNewWindow("scenes/registrationScene.fxml");
+              crateNewWindow(PATH_TO_REGISTRATION_SCENE);
           }
     }
 
-    public void authenticationScene() {
+    public void startIdentificationScene() {
            if(connectToServer()) {
                try {
                    PrintWriter printWriter = new PrintWriter(serverSocket.getOutputStream(), true);
@@ -38,7 +38,7 @@ public class ControllerSceneOne extends Client {
                }
                Stage stage = (Stage) (authenticationButton.getScene().getWindow());
                stage.close();
-               crateNewWindow("scenes/authenticationScene.fxml");
+               crateNewWindow(PATH_TO_IDENTIFICATION_SCENE);
            }
     }
 

@@ -1,42 +1,45 @@
 package sample.com.server;
 
-
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
-public class MessengerCommands extends Server {
+public class MessengerCommands {
+    Data data;
 
-    public static void callingCommandByUser(User user) {
-        int indexSpace = user.getLastMessage().indexOf(" ");
+    public MessengerCommands(Data data){
+        this.data = data;
+    }
+
+    public void callingCommandByUser(FormatMessages messages) {
+        int indexSpace = messages.getMessageText().indexOf(" ");
         if(indexSpace == -1){
-            System.out.println("вызвана некоректная команда");
+            System.out.println("Вызвана некоректная команда");
             return;
         }
-        String command = user.getLastMessage().substring(1, indexSpace);
-        String subject = user.getLastMessage().substring(++indexSpace);
-        if(callingCommand(command, subject, user.getName())){
-            Output.sendToOneUser(user, "некоректная команда", "Server");
+        String command = messages.getMessageText().substring(1, indexSpace);
+        String subject = messages.getMessageText().substring(++indexSpace);
+        if(callCommand(command, subject, messages.getNameAuthor())){
+            Output output =new Output(data);
+            output.sendToOneUser(data.getUserByName(messages.getNameAuthor()),
+                    new FormatMessages("Server","Некоректная команда"));
         }
     }
 
-    public static void callingCommandByServer(String message) {
+    public void callingCommandByServer(String message) {
         int indexSpace = message.indexOf(" ");
         if(indexSpace == -1){
-            System.out.println("вызвана некоректная команда");
+            System.out.println("Вызвана некоректная команда");
             return;
         }
         String command = message.substring(1, indexSpace);
         String subject = message.substring(++indexSpace);
-        if(callingCommand(command, subject, "Server")){
-            System.out.println("вызвана некоректная команда");
+        if(callCommand(command, subject, "Server")){
+            System.out.println("Вызвана некоректная команда");
         }
     }
 
-    private static boolean callingCommand(String command, String subject, String nameAuthor){
+    private boolean callCommand(String command, String subject, String nameAuthor){
         if (command.equals(Commands.BAN.toString())) {
-            ban(subject, nameAuthor);
+            banUser(subject, nameAuthor);
             return false;
         } else if (command.equals(Commands.GIVEADMIN.toString())) {
             giveAdmin(subject, nameAuthor);
@@ -46,25 +49,22 @@ public class MessengerCommands extends Server {
         }
     }
 
-    private static void ban(String subject, String nameAuthor){
-        ArrayList<User> tmp = listUsers.stream().filter(y -> y.getName().equals(subject))
-                .collect(Collectors.toCollection(ArrayList::new));
-        for (User it : tmp) {
+    private void banUser(String subject, String nameAuthor){
+        User user = data.getUserByName(subject);
             try {
-                Output.print(nameAuthor, "пользователь " + it.getName() + " получил бан");
-                it.getSocket().close();
+                Output output = new Output(data);
+                output.printForAllUsers(new FormatMessages(nameAuthor, "Пользователь " + user.getName() + " получил бан"));
+                user.getSocket().close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-    }
 
-    private static void giveAdmin(String subject, String nameAuthor){
-        ArrayList<User> tmp = listUsers.stream().filter(y -> y.getName().equals(subject))
-                .collect(Collectors.toCollection(ArrayList::new));
-        for (User it : tmp) {
-            it.setAdmin(true);
-            Output.print(nameAuthor, "даю пользователю " + it.getName() + " права администратора");
-        }
+    private void giveAdmin(String subject, String nameAuthor){
+        User user = data.getUserByName(subject);
+            user.setAdmin(true);
+            Output output = new Output(data);
+            output.printForAllUsers(new FormatMessages(nameAuthor,
+                    "Даю пользователю " + user.getName() + " права администратора"));
     }
 }
